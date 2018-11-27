@@ -1,5 +1,5 @@
-from django.contrib.auth import authenticate
-from django.http import JsonResponse
+from django.contrib.auth import authenticate, login
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 
 # Create your views here.
@@ -45,6 +45,14 @@ class LoginAPI(View):
         param = req.GET
         name = param.get("name")
         pwd = param.get("pwd")
+        #校验
         user = authenticate(username = name,password = pwd)
+        if user:
+            #登入
+            login(req,user)
+            return HttpResponse("ok")
+        else:
+            return HttpResponse("用户名或密码错误")
+
 
 
