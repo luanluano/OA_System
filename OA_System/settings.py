@@ -118,6 +118,9 @@ USE_L10N = True
 
 USE_TZ = False
 
+AUTH_USER_MODEL = 'myapp.MyUser'
+
+AUTHENTICATION_BACKENDS = ("myapp.auth.MyBackend",)
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
@@ -144,7 +147,23 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 #配置日志
 
 
-#缓存
+# 缓存
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    "mail_cache":{
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/2",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
 
 
 
