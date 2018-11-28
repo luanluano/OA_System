@@ -81,7 +81,7 @@ DATABASES = {
         'PORT':3306,
         'HOST':'caimengjun.club',
         'USER':'root',
-        'PASSWORD':'Admin@123',
+        'PASSWORD':'Admin@123'
     }
 }
 

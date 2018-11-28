@@ -1,5 +1,6 @@
 from django.contrib.auth.backends import ModelBackend
 from .models import MyUser
+
 class MyBackend(ModelBackend):
 
     def authenticate(self, request, username=None, password=None, **kwargs):
@@ -12,6 +13,6 @@ class MyBackend(ModelBackend):
             except MyUser.DoesNotExist:
                 return None
 
-        # 用于判断is_active字段
+        #校验
         if user.check_password(password) and self.user_can_authenticate(user=user):
             return user
