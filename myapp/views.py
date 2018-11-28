@@ -1,23 +1,22 @@
+from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
-from django.core.cache import caches
-from django.core.mail import send_mail
-from django.http import JsonResponse, HttpResponse
-from django.shortcuts import render
-
-# Create your views here.
-
 from django.contrib.auth.models import User
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.template.loader import get_template
 
+from .util import get_unique_str
+from django.core.mail import send_mail
+# Create your views here.
 from django.views import View
+from django.core.cache import caches
 
-from OA_System import settings
-from myapp.models import MyUser
-from myapp.util import get_unique_str
-
+from .util import checkout_permission
 # 得到具体的缓存
 mycache = caches['mail_cache']
+
+from .models import MyUser
+
 
 
 class RegisterAPI(View):
@@ -27,6 +26,7 @@ class RegisterAPI(View):
         params = req.POST
         name = params.get("name")
         pwd = params.get("pwd")
+        email = params.get("email")
         confirm_pwd = params.get("confirm_pwd")
         #判断用户密码和确认密码是否一致
         if pwd and confirm_pwd and pwd == confirm_pwd:
@@ -40,7 +40,7 @@ class RegisterAPI(View):
                 return JsonResponse(data)
             else:
                 # 创建用户
-                user = MyUser.objects.create_user(username=name, password=pwd, is_active=False)
+                user = MyUser.objects.create_user(username=name, password=pwd, is_active=False,email = email)
                 data = {
                     "code": 1,
                     "msg": "OK",
@@ -55,6 +55,8 @@ class LoginAPI(View):
         param = req.GET
         name = param.get("name")
         pwd = param.get("pwd")
+        print(name)
+        print(pwd)
 #         校验
         user = authenticate(username=name, password=pwd)
         if user:
@@ -76,11 +78,11 @@ def mylogout(req):
 
 
 def send_verify_mail(req):
-    title = "来自千锋的问候"
+    title = "请激活账号"
     msg = ""
     from_email = settings.DEFAULT_FROM_EMAIL
     recieve = [
-        "liuda@1000phone.com"
+        "1299851090@qq.com"
     ]
     code = get_unique_str()
     # 拼接URL
@@ -96,7 +98,7 @@ def send_verify_mail(req):
     # 将发送的结果保存到缓存
     # 获取请求的用户
     user = req.user
-    user_id = user.id #此处应该是真实的用户id
+    user_id = 1 #此处应该是真实的用户id
     mycache.set(code, user_id, 60 * 60)
     return HttpResponse("ok")
 
